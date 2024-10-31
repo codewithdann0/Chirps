@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use App\Models\Chirp;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,8 @@ class ChirpController extends Controller
     public function index()
     {
         //
-        return response('Hello, World!');
+        
+        return view('chirps.index');
     }
 
     /**
@@ -34,11 +36,17 @@ class ChirpController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         //
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
+ 
+        $request->user()->chirps()->create($validated);
+ 
+        return redirect(route('chirps.index'));
     }
-
     /**
      * Display the specified resource.
      *
